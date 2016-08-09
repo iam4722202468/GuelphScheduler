@@ -1,0 +1,101 @@
+table#gridlayout {
+	border: 1px solid black;
+	table-layout: fixed;
+	
+	width: 300px;
+	
+	/*width: 650px;*/
+	/*border-collapse: separate;*/
+}
+
+table#gridlayout col.time {
+	width: 50px;
+}
+
+table#gridlayout col.day {
+	width: 120px;
+}
+
+table#gridlayout thead th {
+	text-align: center;
+	border: 0px;
+	padding: 0px;
+}
+
+table#gridlayout thead tr th div.grid {
+	height: 19px;
+	border: 1px solid black;
+	line-height: 19px;
+}
+
+table#gridlayout thead tr th div.time {
+	height: 19px;
+	border: 1px solid black;
+}
+
+.dayname {
+	padding-left: 10px;
+}
+
+table#gridlayout td {
+	vertical-align: top;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+	/*border: 1px solid #eee;*/
+}
+
+table#gridlayout tbody td div.grid {
+	border: 1px solid #eee;
+	height: 26px;
+	margin: 0px;
+	font-size: 0px;
+}
+
+table#gridlayout tbody td div.time {
+	font-size: 8pt;
+	border: 1px solid #000;
+	height: 24px;
+	margin: 0px;
+	text-align: center;
+	padding-top: 2px;
+}
+
+div#schedulegrid {
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	width: 652px;
+}
+
+div#courseslots div#slot{
+	position: absolute;
+	border: 1px solid black;
+	font-size: 8pt;
+	width: 118px;
+	font-weight: bold;
+	text-align: center;
+}
+
+div#schedulegrid div.slot div {
+	font-size: 8pt;
+	padding: 1px 1px 0px 1px;
+}
+
+div#schedulegrid div.studentinfo {
+	text-align: right;
+	font-size: 10pt;
+	padding-top: 5px;
+}
+
+#courseslots {
+    float: left;
+}
+
+#settings {
+	margin-left: 0px;
+}
+
+.radio-inline {
+	margin-left: 30px;
+}

@@ -1,0 +1,294 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+<script>
+var days = ["Mon", "Tues", "Wed", "Thur", "Fri"];
+var classes = ['LAB', 'LEC', 'SEC']
+
+function timeToPixels(time) {
+	return multiplyHeight*(Math.floor(time/100))*2 + multiplyHeight*(time - Math.floor(time/100)*100)/30
+}
+
+function createSlot(day, starttime, endtime, info) {
+	starttime = parseInt(starttime)-800
+	endtime = parseInt(endtime)-800
+	
+	startY = $("#startY").outerHeight()+1;
+	startX = $("#startX").outerWidth();
+	
+	multiplyHeight = $("#findHeightGrid").outerHeight();
+	gridWidth = $("#findHeightGrid").outerWidth();
+	
+	topPlace = timeToPixels(starttime)
+	bottomPlace = timeToPixels(endtime)
+	
+	startY += topPlace
+	startX += days.indexOf(day) * gridWidth
+	
+	divHeight = bottomPlace - topPlace
+	
+	var element = '<div id="slot" style="left: '+startX+'px; top: '+startY+'px; height: ' + divHeight + 'px;">' + info + '</div>'
+	$("#courseslots").append($(element).width(gridWidth))
+}
+
+function generateSchedule() {
+	for(var w in schedules)
+		for(var x in classes) {
+			if(schedules[w][classes[x]] != null)
+				for(var day in schedules[w][classes[x]]['Days'])
+					createSlot(schedules[w][classes[x]]['Days'][day], schedules[w][classes[x]]['Times'][0], schedules[w][classes[x]]['Times'][1], classes[x] + "<br>" + schedules[w]['Name'] + "<br>" + schedules[w][classes[x]]['Place'])
+		}
+}
+</script>
+
+<link rel="stylesheet" href="moo.css">
+
+<body onload="generateSchedule()">
+	<div id="courseslots" style="position: relative">
+		<table id="gridlayout" border="0" cellpadding="0" cellspacing="0">
+			<colgroup>
+				<col class="time" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th><div class="time">&nbsp;</div></th>
+					<th><div class="grid" id="startY">Monday</div></th>
+					<th><div class="grid">Tuesday</div></th>
+					<th><div class="grid">Wednesday</div></th>
+					<th><div class="grid">Thursday</div></th>
+					<th><div class="grid">Friday</div></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><div class="time" id="startX">08:00am</div></td>
+					<td><div class="grid" id="findHeightGrid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">10:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">10:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">11:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">11:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">12:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">12:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">01:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">01:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">02:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">02:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">03:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">03:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">04:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">04:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">05:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">05:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">06:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">06:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">07:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">07:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</body>

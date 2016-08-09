@@ -1,0 +1,62 @@
+<html>
+
+<head>
+	<title>Schedule Creator</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/index.css">
+	<link rel="icon" href="Calendar-icon.png">
+</head>
+
+<body onload="addItem();">
+	<script>
+	indexNum = 0;
+	
+	function addItem() {
+		var div = document.getElementById('formLines');
+		
+		if(div.children.length < 5)
+		{
+			var toAdd = document.createElement('div');
+			toAdd.setAttribute('class','formClass ' + indexNum);
+			toAdd.innerHTML = '<select class="course" name="course ' + indexNum + '"><option value=""></option><option value="ACCT">ACCT - Accounting</option><option value="AGBU">AGBU - Agribusiness</option><option value="AGR">AGR - Agriculture</option><option value="AHSS">AHSS - Arts/Humanities/Social Sci</option><option value="ANSC">ANSC - Animal Science</option><option value="ANTH">ANTH - Anthropology</option><option value="AQUA">AQUA - Aquaculture</option><option value="ARTH">ARTH - Art History</option><option value="ASCI">ASCI - Arts &amp; Sciences</option><option value="AVC">AVC - Art &amp; Visual Culture</option><option value="BADM">BADM - Business Administration</option><option value="BINF">BINF - Bioinformatics</option><option value="BIOC">BIOC - Biochemistry</option><option value="BIOL">BIOL - Biology</option><option value="BIOM">BIOM - Biomedical Science</option><option value="BIOP">BIOP - Biophysics</option><option value="BIOT">BIOT - Biotechnology</option><option value="BOT">BOT - Botany</option><option value="BUS">BUS - Business</option><option value="CCJP">CCJP - Criminology/Criminal Justice</option><option value="CDE">CDE - Capacity Development/Extension</option><option value="CHEM">CHEM - Chemistry</option><option value="CHIN">CHIN - Chinese</option><option value="CIS">CIS - Computing &amp; Information Sci.</option><option value="CLAS">CLAS - Classical Studies</option><option value="CLIN">CLIN - Clinical Studies</option><option value="CME">CME - Commerce,Management&amp;Economics</option><option value="COOP">COOP - Co-Op Education</option><option value="CROP">CROP - Crop Science</option><option value="CRWR">CRWR - Creative Writing</option><option value="DAFL">DAFL - Agri-Food Leadership (diploma)</option><option value="DAGR">DAGR - Ag. &amp; Equine Studies (dip)</option><option value="DENM">DENM - Environmental Mngt (diploma)</option><option value="DEQN">DEQN - Equine (Diploma)</option><option value="DFN">DFN - Food &amp; Nutrition (diploma)</option><option value="DHRT">DHRT - Horticulture (diploma)</option><option value="DTM">DTM - Turf Management (diploma)</option><option value="DVT">DVT - Veterinary Technology (dip)</option><option value="ECON">ECON - Economics</option><option value="ECS">ECS - Early Childhood Studies</option><option value="EDRD">EDRD - Env. Design/Rural Development</option><option value="ENGG">ENGG - Engineering</option><option value="ENGL">ENGL - English</option><option value="ENVB">ENVB - Environmental Biology</option><option value="ENVM">ENVM - Environmental Management</option><option value="ENVS">ENVS - Environmental Sciences</option><option value="EQN">EQN - Equine</option><option value="EURO">EURO - European Studies</option><option value="FARE">FARE - Food, Agr &amp; Resource Economics</option><option value="FCSS">FCSS - Family/Community Social Servic</option><option value="FDNT">FDNT - Food &amp; Nutritional Science</option><option value="FINA">FINA - Fine Art</option><option value="FOOD">FOOD - Food Science</option><option value="FRAN">FRAN - Family Rel\'s/Applied Nutrition</option><option value="FREN">FREN - French Studies</option><option value="FRHD">FRHD - Family Relations &amp; Human Dev.</option><option value="FSQA">FSQA - Food Safety &amp; Quality Assuranc</option><option value="GEOG">GEOG - Geography</option><option value="GERM">GERM - German Studies</option><option value="GERO">GERO - Gerontology</option><option value="GREK">GREK - Greek Studies</option><option value="HHNS">HHNS - Human Health/Nutritional Sci</option><option value="HISP">HISP - Hispanic Studies</option><option value="HIST">HIST - History</option><option value="HK">HK - Human Kinetics</option><option value="HORT">HORT - Horticultural Science</option><option value="HROB">HROB - Human Resource/Organizat Behav</option><option value="HTM">HTM - Hospitality &amp; Tourism Mngt</option><option value="HUMN">HUMN - Humanities</option><option value="IBIO">IBIO - Integrative Biology</option><option value="IDEV">IDEV - International Development Std.</option><option value="INT">INT - Interdisciplinary</option><option value="IPS">IPS - Interdisciplinary Physical Sci</option><option value="ISS">ISS - Interdisciplinary Social Sci.</option><option value="ITAL">ITAL - Italian Studies</option><option value="JUST">JUST - Justice Studies</option><option value="KIN">KIN - Kinesiology</option><option value="LACS">LACS - Latin American/Caribbean St</option><option value="LARC">LARC - Landscape Architecture</option><option value="LAT">LAT - Latin</option><option value="LEAD">LEAD - Leadership</option><option value="LING">LING - Linguistics</option><option value="LRS">LRS - Land Resource Science</option><option value="LTS">LTS - Literary/Theatre Studies</option><option value="MATH">MATH - Mathematics</option><option value="MBG">MBG - Molecular Biology &amp; Genetics</option><option value="MCB">MCB - Molecular &amp; Cellular Biology</option><option value="MCM">MCM - McMaster</option><option value="MCS">MCS - Marketing &amp; Consumer Studies</option><option value="MDST">MDST - Media Studies</option><option value="MGMT">MGMT - Management</option><option value="MICR">MICR - Microbiology</option><option value="MUSC">MUSC - Music</option><option value="NANO">NANO - Nanoscience</option><option value="NEUR">NEUR - Neuroscience</option><option value="NRS">NRS - Natural Resource Studies</option><option value="NUTR">NUTR - Nutrition</option><option value="OAGR">OAGR - Organic Agriculture</option><option value="PABI">PABI - Pathobiology</option><option value="PATH">PATH - Pathology</option><option value="PBIO">PBIO - Plant Biology</option><option value="PHIL">PHIL - Philosophy</option><option value="PHYS">PHYS - Physics</option><option value="PLNT">PLNT - Plant Agriculture</option><option value="POLS">POLS - Political Science</option><option value="POPM">POPM - Population Medicine</option><option value="PORT">PORT - Portuguese</option><option value="PSYC">PSYC - Psychology</option><option value="REAL">REAL - Real Estate &amp; Housing</option><option value="RPD">RPD - Rural Planning &amp; Development</option><option value="RST">RST - Rural Studies</option><option value="SART">SART - Studio Art</option><option value="SCMA">SCMA - Science &amp; Math</option><option value="SOAN">SOAN - Sociology &amp; Anthropology</option><option value="SOC">SOC - Sociology</option><option value="SPAN">SPAN - Spanish</option><option value="STAT">STAT - Statistics</option><option value="THST">THST - Theatre Studies</option><option value="TOX">TOX - Toxicology</option><option value="TRMH">TRMH - Tourism and Hospitality</option><option value="UNIV">UNIV - Interdisciplinary University</option><option value="VETM">VETM - Veterinary Medicine</option><option value="WAT">WAT - Waterloo</option><option value="WLU">WLU - Wilfrid Laurier</option><option value="WMST">WMST - Women\'s Studies</option><option value="XSEN">XSEN - Seneca College</option><option value="XSHR">XSHR - Sheridan College</option><option value="ZOO">ZOO - Zoology</option></select><select class="level" name="level ' + indexNum + '"><option value=""></option><option value="010">010 - Diploma - 1st Semester</option><option value="020">020 - Diploma - 2nd Semester</option><option value="030">030 - Diploma - 3rd Semester</option><option value="040">040 - Diploma - 4th Semester</option><option value="100">100 - First Year</option><option value="200">200 - Second Year</option><option value="300">300 - Third Year</option><option value="400">400 - Fourth Year</option><option value="500">500 - Graduate</option><option value="600">600 - Graduate</option><option value="700">700 - Graduate</option><option value="800">800 - Graduate</option><option value="900">900 - Transfer Credit</option></select><input class="number" name="number ' + indexNum + '" maxlength="7" size="7" type="text"><input class="section" name="section ' + indexNum + '" maxlength="5" size="5" type="text"><button onclick="removeItem(this.parentElement);">Delete</button><br>'
+			
+			div.appendChild(toAdd);
+			indexNum++;
+		}
+	}
+	
+	function removeItem(element) {
+		var div = document.getElementById('formLines');
+		
+		if(div.children.length > 1)
+		{
+			element.outerHTML = "";
+			delete element;
+		}
+	}
+	
+	function validateForm() {
+		for(var x = 0; x < document.getElementById("formLines").children.length; x++)
+		{
+			checkingDiv = document.getElementById("formLines").children[x]
+			courseDiv = checkingDiv.getElementsByClassName('course')[0]
+			if(courseDiv.value == "")
+			{
+				alert("Course Name must be entered")
+				return false;
+			}
+		}
+	}
+	
+	</script>
+	
+	<form name="inputForm" action="/" method="post" onsubmit="return validateForm()">
+		<div id="formLines"></div>
+		<br>
+		<button type="button" onclick="addItem();">+</button>
+		<br>
+		<button>Submit</button>
+	</form>
+
+</body>
+
+</html>

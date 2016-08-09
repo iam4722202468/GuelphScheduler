@@ -1,0 +1,475 @@
+<html>
+
+<div id="schedules"></div>
+
+<head>
+	<script src="/javascript/jquery.min.js"></script>
+	<script src="/javascript/bootstrap.min.js"></script>
+
+	<link rel="stylesheet" href="/stylesheets/stolen.css">
+	<link rel="stylesheet" href="/stylesheets/bootstrap.css">
+	<link rel="stylesheet" href="/stylesheets/index.css">
+
+	<link rel="icon" href="Calendar-icon.png">
+</head>
+
+<div id="loaded"></div><br>
+
+<script>
+	var days = ["Mon", "Tues", "Wed", "Thur", "Fri"];
+	var classes = ['LAB', 'LEC', 'SEM']
+	var elements = []
+	
+	function timeToPixels(time) {
+		return multiplyHeight*(Math.floor(time/100))*2 + multiplyHeight*(time - Math.floor(time/100)*100)/30
+	}
+	
+	function createSlot(day, starttime, endtime, info) {
+		starttime = parseInt(starttime)-800
+		endtime = parseInt(endtime)-800
+		
+		startY = $("#startY").outerHeight()+1;
+		startX = $("#startX").outerWidth() + 15;
+		
+		multiplyHeight = $("#findHeightGrid").outerHeight();
+		gridWidth = $("#findHeightGrid").outerWidth();
+		
+		topPlace = timeToPixels(starttime)
+		bottomPlace = timeToPixels(endtime)
+		
+		startY += topPlace
+		startX += days.indexOf(day) * gridWidth
+		
+		divHeight = bottomPlace - topPlace
+		
+		var element = '<div id="slot" style="left: '+startX+'px; top: '+startY+'px; height: ' + divHeight + 'px;">' + info + '</div>'
+		element = $(element).width(gridWidth-1)
+		
+		elements.push(element)
+		
+		$("#courseslots").append(element)
+	}
+	
+	function generateSchedule(scheduleNumber) {
+		for(var w in schedules[scheduleNumber])
+			for(var x in classes) {
+				if(schedules[scheduleNumber][w][classes[x]] != null)
+					for(var day in schedules[scheduleNumber][w][classes[x]]['Days'])
+						createSlot(schedules[scheduleNumber][w][classes[x]]['Days'][day], schedules[scheduleNumber][w][classes[x]]['Times'][0], schedules[scheduleNumber][w][classes[x]]['Times'][1], classes[x] + "<br>" + schedules[scheduleNumber][w]['Name'] + "<br>" + schedules[scheduleNumber][w][classes[x]]['Place'])
+			}
+	}
+	
+	function refreshTable(updateTo) {
+		for(var x in elements) {
+			elements[x].remove()
+		}
+		elements = []
+		generateSchedule(updateTo)
+	}
+</script>
+
+<script>
+	var indexNum = 0;
+	var SessionID = "<%= SessionID %>";
+	
+	var schedules = JSON.parse('<%= schedules[1].split("'").join("\"").split("u\"").join("\"") %>'.split('False').join('false').split('True').join('true').split("&#34;").join("\""))
+		
+	$("#loaded").html("Loaded " + schedules.length + " of " + "<%=schedules[0]%>")
+	
+	var dynamicElements = {}
+	
+	function addItem() {
+		var div = $('#formLines');
+		
+		if(div.children.length < 5)
+		{
+			var element = '<div id="' + indexNum + '"><label class="checkbox-inline dayname"><input type="checkbox" value="">Mon</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Tues</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Wed</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Thur</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Fri</label><br><br><div class="input-group"><span class="input-group-addon">Start</span><select class="starttime form-control"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select><span class="input-group-btn" style="width:0px;"></span><span class="input-group-addon">End</span><select class="endtime form-control"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select></div><button onclick="removeItem(this.parentElement);">Delete</button><br><br></div>'
+			element = $(element);
+			
+			div.append(element);
+			dynamicElements[indexNum] = element;
+			
+			indexNum++;
+		}
+	}
+	
+	function removeItem(element) {
+		delete dynamicElements[parseInt(element.id)]
+		element.outerHTML = "";
+		delete element;
+	}
+	
+	function getSubInfo(currentElement) {
+		var newString = ""
+		
+		currentElement.each(function () {
+			if($(this).hasClass("dayname"))
+				newString += $(this).html().split(">")[1] + ":" + $(this).children(":first").is(':checked') + ","
+			else if($(this).hasClass("input-group")) {
+				newString += "starttime" + ":" + $($(this).children()[1]).val() + "," + "endtime" + ":" + $($(this).children()[4]).val()
+			}
+		});
+		
+		return newString
+	}
+	
+	function getInfoToSend(callback_) {
+		var toReturnString = ""
+		
+		for(x in dynamicElements)
+			toReturnString += "{" + getSubInfo(dynamicElements[x].children()) + "}"
+		
+		toReturnString += "[" + getSubInfo($(".overall").children()) + "]"
+		
+		return toReturnString
+	}
+	
+	function getRateData() {
+		var toReturnObject = {}
+		
+		$("form#rateForm :input").each(function() {
+			if($(this).attr("name").indexOf("Radio") > -1) {
+				if($(this).is(':checked')) {
+					toReturnObject[$(this).attr('name')] = $(this).attr('id')
+				}
+			} else {
+				toReturnObject[$(this).attr('name')] = $(this).val()
+			}
+		});
+		
+		return toReturnObject
+	}
+	
+	function addCover() {
+		startY = $("#startY").outerHeight()+1;
+		startX = $("#startX").outerWidth() + 15;
+		
+		multiplyHeight = $("#findHeightGrid").outerHeight();
+		gridWidth = $("#findHeightGrid").outerWidth();
+		
+		var element = '<div id="loadingCover" style="left: '+startX+'px; top: '+startY+'px;">Loading Courses...</div>'
+		element = $(element).width(gridWidth*5-1)
+		element = $(element).height(multiplyHeight*28-1)
+		
+		return element
+	}
+	
+	function removeCover(coverObject) {
+		coverObject.outerHTML = "";
+		delete coverObject;
+	}
+	
+	function rebuild() {
+		$('#submit').prop('disabled', true);
+		
+		var cover = addCover()
+		$("#courseslots").append(cover)
+		
+		$.post("/rebuild",
+		{
+			SessionID: SessionID,
+			criteria: getInfoToSend(),
+			rateData: JSON.stringify(getRateData())
+		},
+		function(response,status){
+			response[1] = JSON.parse(response[1].split('False').join('false').split('True').join('true').split("'").join("\"").split("u\"").join("\"").split("&#34;").join("\""))
+			
+			removeCover(cover[0])
+			
+			$('#submit').prop('disabled', false);
+			
+			//console.log(response[1])
+			
+			schedules = response[1];
+			$("#loaded").html("Loaded " + schedules.length + " of " + response[0])
+			//$("#schedules").html(JSON.stringify(schedules))
+			refreshTable(0)
+			$($("#showing")[0]).children()[1].value = 1
+		});
+	}
+</script>
+
+<body onload="generateSchedule(0)" class="row">
+	<div id="courseslots" style="position: relative" class="col-lg-6">
+		<table id="gridlayout" border="0" cellpadding="0" cellspacing="0">
+			<colgroup>
+				<col class="time" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th><div class="time">&nbsp;</div></th>
+					<th><div class="grid" id="startY">Monday</div></th>
+					<th><div class="grid">Tuesday</div></th>
+					<th><div class="grid">Wednesday</div></th>
+					<th><div class="grid">Thursday</div></th>
+					<th><div class="grid">Friday</div></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><div class="time" id="startX">08:00am</div></td>
+					<td><div class="grid" id="findHeightGrid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">10:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">10:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">11:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">11:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">12:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">12:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">01:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">01:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">02:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">02:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">03:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">03:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">04:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">04:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">05:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">05:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">06:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">06:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">07:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">07:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+			</tbody>
+		</table>
+		<br>
+		<div id="showing" class="input-group"><span class="input-group-addon">Currently showing schedule</span><input onchange="refreshTable(this.value-1)" type="number" value="1" min="1" max="10"/></div>
+	
+	</div>
+	<div id="settings" class="col-lg-5">
+		<h3>Times Wanted</h3>
+		<div class="overall"><label class="checkbox-inline dayname"><input type="checkbox" value="">Mon</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Tues</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Wed</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Thur</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Fri</label>
+		<br><br>
+		<div class="input-group"><span class="input-group-addon">Start</span><select class="starttime form-control"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select><span class="input-group-btn" style="width:0px;"></span><span class="input-group-addon">End</span><select class="endtime form-control"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select></div></div>
+		
+		<h3>Blocked Times</h3>
+		<div id="formLines"></div>
+		<br>
+		<button type="button" onclick="addItem();">+</button>
+		
+		<h3>Rating</h3>
+		
+		<form id="rateForm">
+			<div class="input-group"><span class="input-group-addon">High Teacher Rating</span>						<input type="number" class="ratingNumber" name="teacherRating" min="0" max="9"></div><br>
+			<div class="input-group"><span class="input-group-addon">Class Time Start</span>			<input type="number" class="ratingNumber" name="startTime" min="0" max="9" value="0"></div>
+				<label class="radio-inline"><input type="radio" name="startTimeRadio" id="0">Early Start</label><label class="radio-inline"><input type="radio" name="startTimeRadio" id="1">Late Start</label><br><br>
+			<div class="input-group"><span class="input-group-addon">Class Time End</span>				<input type="number" class="ratingNumber" name="endTime" min="0" max="9" value="0"></div>
+				<label class="radio-inline"><input type="radio" name="endTimeRadio" id="0">Early End</label><label class="radio-inline"><input type="radio" name="endTimeRadio" id="1">Late End</label><br><br>
+			<div class="input-group"><span class="input-group-addon">Short or long Class Times</span>	<input type="number" class="ratingNumber" name="classLength" min="0" max="9" value="0"></div>
+				<label class="radio-inline"><input type="radio" name="classLengthRadio" id="0">Short Classes</label><label class="radio-inline"><input type="radio" name="classLengthRadio" id="1">Long Classes</label><br><br>
+			<div class="input-group"><span class="input-group-addon">Time between classes</span>					<input type="number" class="ratingNumber" name="timeBetween" min="0" max="9" value="0"></div>
+				<label class="radio-inline"><input type="radio" name="timeBetweenRadio" id="0">Minimal time</label><label class="radio-inline"><input type="radio" name="timeBetweenRadio" id="1">Lots of time</label><br><br>
+			<div class="input-group"><span class="input-group-addon">Consecutive Classes</span>			<input type="number" class="ratingNumber" name="consecutiveClasses" min="0" max="9" value="0"></div>
+				<label class="radio-inline"><input type="radio" name="consecutiveClassesRadio" id="0">Minimum</label><label class="radio-inline"><input type="radio" name="consecutiveClassesRadio" id="1">Maximum</label><br><br>
+			<div class="input-group"><span class="input-group-addon">Days Off</span>								<input type="number" class="ratingNumber" name="daysOff" min="0" max="9"></div><br>
+			<div class="input-group"><span class="input-group-addon">Longest class time allowed</span>				<input type="number" class="ratingNumber" name="longestClassAllowed" min="0"></div><br>
+		</form>
+		<button id='submit' onclick="rebuild()">Rebuild Schedules</button>
+	</div>
+</body>
+</html>

@@ -1,0 +1,417 @@
+<html>
+
+<div id="schedules"></div>
+
+<script src="static/javascript/jquery.min.js"></script>
+<script src="static/javascript/bootstrap.min.js"></script>
+
+<link rel="stylesheet" href="moo.css">
+<link rel="stylesheet" href="static/stylesheets/Bootstrap/bootstrap.css">
+
+<div id="loaded"></div><br>
+
+<script>
+var schedules = JSON.parse('[{"LEC":{"Place":"ROZH, Room 101","Days":["Mon","Wed"],"Times":["1730","1850"]},"Name":"CHEM*1040","LAB":{"Place":"SSC, Room 2101","Days":["Thur"],"Times":["1900","2150"]},"ID":"8895","rateData":[-1],"Spots":"10 / 12","Teacher":"TBA TBA"},{"LEC":{"Place":"WMEM, Room 103","Days":["Tues","Thur"],"Times":["1730","1850"]},"Name":"MATH*1200","Spots":"7 / 200","ID":"7057","rateData":[4.93],"LAB":{"Place":"WMEM, Room 103","Days":["Fri"],"Times":["1230","1320"]},"Teacher":"M. Demers"},{"LEC":{"Place":"ROZH, Room 101","Days":["Tues","Thur"],"Times":["1600","1720"]},"Name":"CIS*1500","LAB":{"Place":"THRN, Room 2418","Days":["Mon"],"Times":["1030","1220"]},"ID":"5723","rateData":[-1],"Spots":"3 / 40","Teacher":"TBA TBA"},{"LEC":{"Place":"ANNU, Room 156","Days":["Mon","Wed"],"Times":["1330","1420"]},"Name":"SPAN*1100","Spots":"5 / 23","ID":"7999","rateData":[2.93],"LAB":{"Place":"MCKN, Room 020","Days":["Fri"],"Times":["1330","1420"]},"Teacher":"R. Gomez"},{"ratings":[3.9299999999999997,[[0,1,0,1,1],[420,10,310,60,10],[190,250,90,250,190],[[230,800,530,800,430],[350,350,350,50,780]]],[[1,1,1],[0,2,0],[1,1,0],[0,2,1],[2,0,0]],[false,false,false,false,false]]},{"finalRating":37.299252336448596}]')
+var days = ["Mon", "Tues", "Wed", "Thur", "Fri"];
+var classes = ['LAB', 'LEC', 'SEC']
+
+function timeToPixels(time) {
+	return multiplyHeight*(Math.floor(time/100))*2 + multiplyHeight*(time - Math.floor(time/100)*100)/30
+}
+
+function createSlot(day, starttime, endtime, info) {
+	starttime = parseInt(starttime)-800
+	endtime = parseInt(endtime)-800
+	
+	startY = $("#startY").outerHeight()+1;
+	startX = $("#startX").outerWidth() + 15;
+	
+	multiplyHeight = $("#findHeightGrid").outerHeight();
+	gridWidth = $("#findHeightGrid").outerWidth();
+	
+	topPlace = timeToPixels(starttime)
+	bottomPlace = timeToPixels(endtime)
+	
+	startY += topPlace
+	startX += days.indexOf(day) * gridWidth
+	
+	divHeight = bottomPlace - topPlace
+	
+	var element = '<div id="slot" style="left: '+startX+'px; top: '+startY+'px; height: ' + divHeight + 'px;">' + info + '</div>'
+	element = $(element).width(gridWidth-1)
+	
+	$("#courseslots").append(element)
+}
+
+function generateSchedule() {
+	for(var w in schedules)
+		for(var x in classes) {
+			if(schedules[w][classes[x]] != null)
+				for(var day in schedules[w][classes[x]]['Days'])
+					createSlot(schedules[w][classes[x]]['Days'][day], schedules[w][classes[x]]['Times'][0], schedules[w][classes[x]]['Times'][1], classes[x] + "<br>" + schedules[w]['Name'] + "<br>" + schedules[w][classes[x]]['Place'])
+		}
+}
+</script>
+
+<script>
+	var indexNum = 0;
+	var SessionID = "<%= SessionID %>";
+	
+	//var schedules = JSON.parse('<%= schedules[1].split("'").join("\"").split("u\"").join("\"") %>'.split('False').join('false').split('True').join('true').split("&#34;").join("\""))
+	
+	$("#loaded").html("Loaded " + schedules.length + " of " + "<%=schedules[0]%>")
+	
+	var dynamicElements = {}
+	
+	function addItem() {
+		var div = $('#formLines');
+		
+		if(div.children.length < 5)
+		{
+			var toAdd = document.createElement('div');
+			toAdd.setAttribute('id',indexNum);
+			toAdd.innerHTML = '<label class="dayname">Mon<input type="checkbox"></input></label><label class="dayname">Tues<input type="checkbox"></input></label><label class="dayname">Wed<input type="checkbox"></input></label><label class="dayname">Thur<input type="checkbox"></input></label><label class="dayname">Fri<input type="checkbox"></input></label><label class="dayname">Sat<input type="checkbox"></input></label><label class="dayname">Sun<input type="checkbox"></input></label><br><select class="starttime"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select><select class="endtime"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select><button onclick="removeItem(this.parentElement);">Delete</button><br><br>'
+			
+			div.appendChild(toAdd);
+			dynamicElements[indexNum] = toAdd;
+			
+			indexNum++;
+		}
+	}
+	
+	function removeItem(element) {
+		delete dynamicElements[parseInt(element.id)]
+		element.outerHTML = "";
+		delete element;
+	}
+	
+	function getSubInfo(element)
+	{
+		var newString = ""
+		for(y in element)
+		{
+			if(element[y].className == "dayname")
+				newString += element[y].innerText + ":" + element[y].childNodes[1].checked + ","
+			else if(element[y].className == "starttime" || element[y].className == "endtime")
+				newString += element[y].className + ":" + element[y].value + ","
+		}
+		return newString
+	}
+	
+	function getInfoToSend(callback_)
+	{
+		var toReturnString = ""
+		
+		for(x in dynamicElements)
+			toReturnString += "{" + getSubInfo(dynamicElements[x].childNodes) + "}"
+		
+		toReturnString += "[" + getSubInfo($("$overall")[0].childNodes) + "]"
+		
+		callback_(toReturnString)
+	}
+	
+	function rebuild() {
+		getInfoToSend(function(returnData) {
+			var xhttp = new XMLHttpRequest();
+			xhttp.onreadystatechange = function() {
+				if (xhttp.readyState == 4 && xhttp.status == 200) {
+					var response = JSON.parse(xhttp.responseText)
+					response[1] = JSON.parse(response[1].split('False').join('false').split('True').join('true').split("'").join("\"").split("u\"").join("\"").split("&#34;").join("\""))
+					
+					schedules = response[1];
+					$("#showing").html("Showing " + schedules.length + " of " + response[0])
+					$("#schedules").html(JSON.stringify(schedules))
+				}
+			};
+			xhttp.open("POST", "/rebuild", true);
+			xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			getInfoToSend(function(criteria) {
+				xhttp.send("SessionID=" + SessionID + "&criteria=" + criteria);
+			});
+		});
+	}
+</script>
+
+<body onload="generateSchedule()" class="row">
+	<div id="courseslots" style="position: relative" class="col-lg-6">
+		<table id="gridlayout" border="0" cellpadding="0" cellspacing="0">
+			<colgroup>
+				<col class="time" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+				<col class="day" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th><div class="time">&nbsp;</div></th>
+					<th><div class="grid" id="startY">Monday</div></th>
+					<th><div class="grid">Tuesday</div></th>
+					<th><div class="grid">Wednesday</div></th>
+					<th><div class="grid">Thursday</div></th>
+					<th><div class="grid">Friday</div></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td><div class="time" id="startX">08:00am</div></td>
+					<td><div class="grid" id="findHeightGrid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">10:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">10:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">11:00am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">11:30am</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">12:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">12:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">01:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">01:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">02:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">02:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">03:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">03:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">04:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">04:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">05:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">05:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">06:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">06:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">07:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">07:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">08:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:00pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+				<tr>
+					<td><div class="time">09:30pm</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+					<td><div class="grid">&nbsp;</div></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div id="settings" class="col-lg-5">
+		<h3>Times Wanted</h3>
+		<div class="overall"><label class="checkbox-inline dayname"><input type="checkbox" value="">Mon</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Tues</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Wed</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Thur</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Fri</label>
+		<br>
+		<select class="starttime"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select><select class="endtime"><option value=""></option><option value="05:00">05:00 - 5am</option><option value="06:00">06:00 - 6am</option><option value="07:00">07:00 - 7am</option><option value="08:00">08:00 - 8am</option><option value="09:00">09:00 - 9am</option><option value="10:00">10:00 - 10am</option><option value="11:00">11:00 - 11am</option><option value="12:00">12:00 - 12pm</option><option value="13:00">13:00 - 1pm</option><option value="14:00">14:00 - 2pm</option><option value="15:00">15:00 - 3pm</option><option value="16:00">16:00 - 4pm</option><option value="17:00">17:00 - 5pm</option><option value="18:00">18:00 - 6pm</option><option value="19:00">19:00 - 7pm</option><option value="20:00">20:00 - 8pm</option><option value="21:00">21:00 - 9pm</option><option value="22:00">22:00 - 10pm</option></select></div>
+		
+		<h3>Blocked Times</h3>
+		<div id="formLines"></div>
+		<br>
+		<button type="button" onclick="addItem();">+</button>
+		
+		<h3>Rating</h3>
+		
+		<form role="form">
+			High Teacher Rating							<input type="number" class="ratingNumber" name="teacherRating" min="0" max="10" value="0"><br>
+			<br>Class Time Start (see below)			<input type="number" class="ratingNumber" name="startTime" min="0" max="10" value="0"><br>
+				<label class="radio-inline"><input type="radio" name="earlyStart">Early Start</label><label class="radio-inline"><input type="radio" name="lateStart">Late Start</label><br>
+			<br>Days Off								<input type="number" class="ratingNumber" name="daysOff" min="0" max="10" value="0"><br>
+			<br>Short or long Class Times (see below)	<input type="number" class="ratingNumber" name="shortOrLong" min="0" max="10" value="0"><br>
+				<label class="radio-inline"><input type="radio" name="shortClasses">Short Classes</label><label class="radio-inline"><input type="radio" name="longClasses">Long Classes</label><br>
+			<br>Time between classes					<input type="number" class="ratingNumber" name="timeBetween" min="0" max="10" value="0"><br>
+				<label class="radio-inline"><input type="radio" name="lotsOfTime">Lots of time</label><label class="radio-inline"><input type="radio" name="minimalTime">Minimal time</label><br>
+			<br>Longest class time allowed				<input type="number" class="ratingNumber" name="longestClassAllowed" min="0"><br>
+			<br>Class Time End (see below)				<input type="number" class="ratingNumber" name="endTime" min="0" max="10" value="0"><br>
+				<label class="radio-inline"><input type="radio" name="earlyEnd">Early End</label><label class="radio-inline"><input type="radio" name="lateEnd">Late End</label><br>
+			<br>Consecutive Classes (see below)			<input type="number" class="ratingNumber" name="consecutiveClasses" min="0" max="10" value="0"><br>
+				<label class="radio-inline"><input type="radio" name="minConsecutive">Minimum</label><label class="radio-inline"><input type="radio" name="maxConsecutive">Maximum</label>
+		</form>
+		
+		<h3>Teacher Blacklist</h3>
+		<button onclick="rebuild()">Rebuild Schedules</button>
+	</div>
+</body>
+</html>
