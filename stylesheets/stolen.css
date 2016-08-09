@@ -99,3 +99,54 @@ div#schedulegrid div.studentinfo {
 .radio-inline {
 	margin-left: 30px;
 }
+
+hr {
+	color: #d5d5d5;
+	height: 1px;
+	border: none;
+	border-top: 1px dashed #aaa;
+	font-size: 10pt;
+}
+
+th {
+	color: #000;
+    font-family: arial, helvetica, sans-serif;
+    font-size: 10pt;
+	border: 1px solid #d5d5d5;
+	text-align: center;
+	padding: 2px;
+	background-color: #efefef;
+}
+
+select {
+	background-color: transparent;
+}
+
+td {
+	background-color: transparent;
+    border: 1px solid #d5d5d5;
+    color: black;
+    font-family: arial, helvetica, verdana, sans-serif, 'times new roman';
+    font-size: 10pt;
+	padding: 2px;
+}
+
+.hidden,
+.windowIdx {
+	display: none;
+}
+
+div.submit {
+	text-align: center;
+	padding: 5px 0px 1px 0px;
+	color: #ffcc00;
+}
+
+tr:nth-child(even) {
+	background-color: #fff;
+}
+
+tr:nth-child(odd) {
+	background-color: #f7f7f7;
+}
+
