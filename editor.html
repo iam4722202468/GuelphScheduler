@@ -57,7 +57,7 @@
 		for(var w in schedules[scheduleNumber])
 		{
 			if(!("finalRating" in schedules[scheduleNumber][w]))
-				toAddCourseInfo += "<b>" + schedules[scheduleNumber][w]['Name'] + "</b> | ID: " + schedules[scheduleNumber][w]['ID'] + " | Teacher: " + schedules[scheduleNumber][w]['Teacher'] + " | Spots: " + schedules[scheduleNumber][w]['Spots'] + "<br>"
+				toAddCourseInfo += "<b>" + schedules[scheduleNumber][w]['Name'] + "</b> | ID: " + schedules[scheduleNumber][w]['ID'] + " | Teacher: " + schedules[scheduleNumber][w]['Teacher'] + "(" + schedules[scheduleNumber][w]['rateData'][0] + ") | Spots: " + schedules[scheduleNumber][w]['Spots'] + "<br>"
 			else {
 				toAddCourseInfo += "Overall schedule rating: " + schedules[scheduleNumber][w]['finalRating']
 			}
