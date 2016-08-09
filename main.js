@@ -107,7 +107,7 @@ app.post('/', function(req,res) {
 		
 		PythonShell.run('./python/main.py', options, function(err, outputArray) {
 			if (err) throw err;
-		//	outputArray = ['57731d4b23fca520121ab123']
+			//outputArray = ['57731d4b23fca520121ab123']
 			
 			if(outputArray !== null)
 				doAlgorithm(outputArray[0], req.csession['ID'], "", req, function(a) {

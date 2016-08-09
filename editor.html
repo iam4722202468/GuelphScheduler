@@ -52,12 +52,23 @@
 	}
 	
 	function generateSchedule(scheduleNumber) {
+		var toAddCourseInfo = ""
+		
 		for(var w in schedules[scheduleNumber])
+		{
+			if(!("finalRating" in schedules[scheduleNumber][w]))
+				toAddCourseInfo += "<b>" + schedules[scheduleNumber][w]['Name'] + "</b> | ID: " + schedules[scheduleNumber][w]['ID'] + " | Teacher: " + schedules[scheduleNumber][w]['Teacher'] + " | Spots: " + schedules[scheduleNumber][w]['Spots'] + "<br>"
+			else {
+				toAddCourseInfo += "Overall schedule rating: " + schedules[scheduleNumber][w]['finalRating']
+			}
+			
 			for(var x in classes) {
 				if(schedules[scheduleNumber][w][classes[x]] != null)
 					for(var day in schedules[scheduleNumber][w][classes[x]]['Days'])
 						createSlot(schedules[scheduleNumber][w][classes[x]]['Days'][day], schedules[scheduleNumber][w][classes[x]]['Times'][0], schedules[scheduleNumber][w][classes[x]]['Times'][1], classes[x] + "<br>" + schedules[scheduleNumber][w]['Name'] + "<br>" + schedules[scheduleNumber][w][classes[x]]['Place'])
 			}
+		}
+		$("#scheduleInfo").html(toAddCourseInfo)
 	}
 	
 	function refreshTable(updateTo) {
@@ -440,9 +451,12 @@
 		</table>
 		<br>
 		<div id="showing" class="input-group"><span class="input-group-addon">Currently showing schedule</span><input onchange="refreshTable(this.value-1)" type="number" value="1" min="1" max="10"/></div>
-	
 	</div>
+	
 	<div id="settings" class="col-lg-5">
+		
+		<div id="scheduleInfo"></div>
+		
 		<h3>Times Wanted</h3>
 		<div class="overall"><label class="checkbox-inline dayname"><input type="checkbox" value="">Mon</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Tues</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Wed</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Thur</label><label class="checkbox-inline dayname"><input type="checkbox" value="">Fri</label>
 		<br><br>
@@ -450,7 +464,6 @@
 		
 		<h3>Blocked Times</h3>
 		<div id="formLines"></div>
-		<br>
 		<button type="button" onclick="addItem();">+</button>
 		
 		<h3>Rating</h3>

@@ -3,7 +3,7 @@
 <head>
 	<title>Schedule Creator</title>
 	<link rel="stylesheet" type="text/css" href="/stylesheets/index.css">
-	<link rel="stylesheet" type="text/css" href="/stylesheets/stolen.css">
+	<link rel="stylesheet" type="text/css" href="/stylesheets/stolen_table.css">
 	<link rel="icon" href="Calendar-icon.png">
 </head>
 
@@ -24,22 +24,9 @@
 		}
 	}
 	
-	function validateForm() {
-		for(var x = 0; x < document.getElementById("formLines").children.length; x++)
-		{
-			checkingDiv = document.getElementById("formLines").children[x]
-			courseDiv = checkingDiv.getElementsByClassName('course')[0]
-			if(courseDiv.value == "")
-			{
-				alert("Course Name must be entered")
-				return false;
-			}
-		}
-	}
-	
 	</script>
 	
-	<form name="inputForm" action="/" method="post" onsubmit="return validateForm()">
+	<form name="inputForm" action="/" method="post">
 		<table>
 			<tbody id="formLines">
 				<tr>
