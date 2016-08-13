@@ -107,6 +107,8 @@ def rateClassLength(daysScheduleObject):
 def rateTeacher(scheduleObject):
 	ratingArray = []
 	
+	sumRatingArray = 0
+	
 	if scheduleObject['Teacher'] == "TBA  TBA":
 		return -1
 	for x in scheduleObject['Teacher'].split(", "):
@@ -120,6 +122,7 @@ def rateTeacher(scheduleObject):
 				doRequest = True
 			else:
 				ratingArray.append(tryToFind['rating'])
+				sumRatingArray += float(ratingArray[-1])
 		else:
 			doRequest = True
 		
@@ -132,13 +135,19 @@ def rateTeacher(scheduleObject):
 			response = urllib2.urlopen(requestURL)
 			html = response.read()
 			teacherObject = eval(html[9:-3])
-			teacherRating = teacherObject['response']['docs'][0]['averageratingscore_rf']
+			
+			try:
+				teacherRating = teacherObject['response']['docs'][0]['averageratingscore_rf']
+			except:
+				teacherRating = -1
+			
 			ratingArray.append(teacherRating)
+			sumRatingArray += float(ratingArray[-1])
 			
 			cache.update({'teacherName':oldX}, {'$set':{'rating':teacherRating, 'teacherName': oldX, 'updateTime':time.time()}}, upsert=True)
 	
 	if len(ratingArray) > 0: #incase something goes wrong it won't crash
-		return sum(ratingArray) / float(len(ratingArray))
+		return sumRatingArray / float(len(ratingArray))
 	else:
 		return -1
 
@@ -147,11 +156,13 @@ def getIndividualRatings(scheduleObject): #get all ratings
 	ratings = []
 	
 	teacherTotalRating = 0
-	totalTeacherCount = 0 #count non TBA teachers
+	totalTeacherCount = 0
 	for x in scheduleObject:
 		if x['rateData'][0] != -1:
 			teacherTotalRating += x['rateData'][0]
-			totalTeacherCount += 1
+		else:
+			teacherTotalRating += 2 #pretend TBA teacher has rating of 2 so it doesn't skew rating
+		totalTeacherCount += 1
 	
 	if totalTeacherCount == 0:
 		ratings.append(-1)

@@ -61,7 +61,7 @@ def calculateFinal(ratingsObject, weight, minMax):
 	if maxSubMin != 0:
 		classLength = (maxSubMin - (sum(ratingsObject[1][2]) - float(minMax[3][0])))/maxSubMin*10
 		
-		if weight[5] == 1:
+		if weight[5] == -1:
 			classLength = 10 - classLength
 	
 	#Consecutive Classes
@@ -70,10 +70,10 @@ def calculateFinal(ratingsObject, weight, minMax):
 	if maxSubMin != 0:
 		consecutiveClasses = (maxSubMin - (sum(ratingsObject[1][0]) - float(minMax[4][0])))/maxSubMin*10
 		
-		if weight[12] == -1:
+		if weight[12] == 1:
 			consecutiveClasses = 10 - consecutiveClasses
 	
-	daysOffCounter = ratingsObject[3].count(True) / float(5) * 10
+	daysOffCounter = ratingsObject[3].count(True) / float(5) * 30
 	
 	calculated += weight[3] * daysOffCounter
 	calculated += timeBetweenClasses * weight[6]

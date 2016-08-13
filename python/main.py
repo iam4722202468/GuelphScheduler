@@ -44,11 +44,11 @@ try:
 		postfields["LIST.VAR2_"+str(index+1)] = sortedInfo[x][1]
 		postfields["LIST.VAR3_"+str(index+1)] = sortedInfo[x][2]
 		postfields["LIST.VAR4_"+str(index+1)] = sortedInfo[x][3]
-		
+
 	#http://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit#133997
 	driver.execute_script('''function post(path, params) {
 		method = "post"
-    
+
 		var form = document.createElement("form");
 		form.setAttribute("method", method);
 		form.setAttribute("action", path);
@@ -62,20 +62,20 @@ try:
 				form.appendChild(hiddenField);
 			}
 		}
-    
+
 		var hiddenField = document.createElement("input");
 		hiddenField.setAttribute("type", "submit");
 		hiddenField.setAttribute("value", "Submit");
 		hiddenField.setAttribute("class", "findme");
 		form.appendChild(hiddenField);
-	
+
 		document.body.appendChild(form);
 	} post("''' + driver.current_url + '''", ''' + str(postfields) + ''')''')
-	
+
 	driver.find_elements_by_class_name("findme")[0].click()
-	
+
 	print str(sessions.insert_one({'SessionID':str(sys.argv[1]), 'Classes':parseData(driver)}).inserted_id)
-	
+		
 	driver.quit()
 except:
 	driver.quit()
