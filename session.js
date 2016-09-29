@@ -1,7 +1,7 @@
 var mongodb = require('mongodb'),
 	MongoClient = mongodb.MongoClient,
 	url = 'mongodb://localhost:27017/scheduleDB';
-			
+
 var timeoutTime = 20 * 60 * 1000;
 function checkTimeout(currentSessions) {
 	for(x in currentSessions)
@@ -41,7 +41,7 @@ function generateHash() {
 }
 
 function getInfo(req, currentSessions) {
-	var sessionID = req.csession['ID'];
+	var sessionID = req.session.ID;
 	
 	if(!sessionID || !(sessionID in currentSessions)) {
 		sessionID = generateHash()
@@ -50,16 +50,14 @@ function getInfo(req, currentSessions) {
 		//currentSessions[sessionID]['Count'] = 1;
 		currentSessions[sessionID]['LastActionTime'] = Date.now();
 		
-		req.csession['ID'] = sessionID;
+		req.session['ID'] = sessionID;
 		
-		req.csflush(); //sync cookies make sure to call before response
 		//return "Your New Hash is " + sessionID;
 		return ""
 	} else {
 		//currentSessions[sessionID]['Count'] += 1;
 		currentSessions[sessionID]['LastActionTime'] = Date.now();
 		
-		req.csflush();
 		//return "You have visited this page " + currentSessions[sessionID]['Count'].toString()
 		return ""
 	}

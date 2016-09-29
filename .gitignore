@@ -1,3 +1,6 @@
 Testing/
 python/*.pyc
 ghostdriver.log
+build/
+node_modules/
+node_modules_global/
