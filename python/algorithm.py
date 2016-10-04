@@ -7,6 +7,8 @@ import pymongo
 from pymongo import MongoClient
 from rate import getRatings
 
+from threading import Thread
+
 client = MongoClient('localhost', 27017)
 db = client.scheduleDB
 
@@ -109,6 +111,8 @@ def checkConflicts(data):
 							return False
 	return True
 
+generatingThreads = []
+
 def generateIndividual(data, generated, newElement):
 	global workingCounter
 	if(newElement != {}):
@@ -131,7 +135,11 @@ def generateIndividual(data, generated, newElement):
 	
 	for x in (data[currentKey]):
 		if(checkConflicts(generated)): #check for conflicts before going deeper
-			generateIndividual(data,copy.deepcopy(generated),x)
+			if len(generated) == 1:
+				generatingThreads.append(Thread(target = generateIndividual, args = (data,copy.deepcopy(generated),x, )))
+				generatingThreads[-1].start()
+			else:
+				generateIndividual(data,copy.deepcopy(generated),x)
 
 #raise ValueError(classData)
 
