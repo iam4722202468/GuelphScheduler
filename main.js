@@ -23,10 +23,10 @@ app.use(express.static('./'));
 var currentSessions = {}
 var currentlyInUse = []
 
-var interval = 1 * 60 * 1000;/*
+var interval = 1 * 60 * 1000;
 setInterval(function() {
 	sessionManager.checkTimeout(currentSessions)
-}, interval);*/
+}, interval);
 
 app.get('/', function (req, res) {
   res.sendFile("index.html", { root: __dirname });
@@ -110,24 +110,24 @@ app.post('/', function(req,res) {
 			args: [req.session['ID'], JSON.stringify(argsArray)]
 		};
 		
-		//PythonShell.run('./python/main.py', options, function(err, outputArray) {
-		//	if (err) throw err;
-			outputArray = ['57731d4b23fca520121ab123']
+		PythonShell.run('./python/main.py', options, function(err, outputArray) {
+			if (err) throw err;
+		//	outputArray = ['57731d4b23fca520121ab123']
 			
 			if(outputArray !== null)
 				doAlgorithm(outputArray[0], req.session['ID'], "", req, function(a) {
 					res.send(a + "<br>" + toReturn);
 				});
 			else
-				res.send("error, something went wrong");
+				res.send("Error: something went wrong<br>Please check to make sure all the classes you inputted exist and have empty sections<br>If you think this is a bug in the program, feel free to email me at aparen01@mail.uoguelph.ca and I will be happy to help with any problems");
 			
-		//});
+        });
 	}
 
 });
 
 var server = app.listen(3128, function() {
-	//sessionManager.removeOldSessions();
+	sessionManager.removeOldSessions();
 	
 	var host = server.address().address
 	var port = server.address().port

@@ -1,0 +1,8 @@
+nodejs
+    <libraries>
+mongodb
+phantomjs 2.1
+    http://phantomjs.org/
+python
+    beautifulsoup
+    <idk what else will do this later>
