@@ -56,10 +56,6 @@ def checkLimits(data, teacher, className):
 		return False
 	return True
 
-def getSchedules(classData, daysOn):
-	generateSchedules(classData)
-	return workingCounter
-
 def generateSchedules(data):
 	generateIndividual(data, [], {})
 
@@ -143,5 +139,7 @@ def generateIndividual(data, generated, newElement):
 
 #raise ValueError(classData)
 
-print getSchedules(classData, [])
+generateSchedules(classData)
+
+print workingCounter
 print getRatings(workingSchedules, weightObject)
