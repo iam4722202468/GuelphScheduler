@@ -172,6 +172,13 @@
 		delete coverObject;
 	}
 	
+    function checkError() {
+        if(schedules.length <= 1)
+            $("#error").html("There was a problem generating your schedule.<br>Some problems that may have occured are:<br>- One of the courses entered has no available sections<br>- No schedules fit your schedule criteria<br>- No possible schedules could be created with those courses<br>Check on WebAdvisor to make sure there are open sections for all of your desired courses.<br>");
+        
+        $($("#showing")[0]).children()[1]['max'] = schedules.length
+    }
+    
 	function rebuild() {
 		$('#submit').prop('disabled', true);
 		
@@ -198,18 +205,12 @@
 			//$("#schedules").html(JSON.stringify(schedules))
 			refreshTable(0)
 			$($("#showing")[0]).children()[1].value = 1
-			$($("#showing")[0]).children()[1]['max'] = schedules.length
-            
-            if(schedules.length == 0)
-            {
-                $("#error").html("There was a problem generating your schedule.<br>Some problems that may have occured are:<br>- One of the courses entered has no available sections<br>- No schedules fit your schedule criteria<br>- No possible schedules could be created with those courses<br>Check on WebAdvisor to make sure there are open sections for all of your desired courses.<br>");
-            }
             
 		});
 	}
 </script>
 
-<body onload="generateSchedule(0)" class="row">
+<body onload="generateSchedule(0); checkError();" class="row">
 	<div id="courseslots" style="position: relative" class="col-lg-6">
 		<table id="gridlayout" border="0" cellpadding="0" cellspacing="0">
 			<colgroup>
@@ -458,7 +459,7 @@
 			</tbody>
 		</table>
 		<br>
-		<div id="showing" class="input-group"><span class="input-group-addon">Currently showing schedule</span><input onchange="refreshTable(this.value-1)" type="number" value="1" min="1" max="<%=schedules[0]%>"/></div>
+		<div id="showing" class="input-group"><span class="input-group-addon">Currently showing schedule</span><input onchange="refreshTable(this.value-1)" type="number" value="1" min="1" max="10"/></div>
 	</div>
 	
 	<div id="settings" class="col-lg-5">

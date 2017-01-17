@@ -1,14 +1,1 @@
-latest start
-earliest start
-latest end
-earliest end
-
-not during times <x> to <y>
-no double courses
-
-min break length
-max break length
-
-bug list:
-	crashes when there is no possible schedule
-	when desired class has no open courses it is ignored
+Implement reverse engineered api
